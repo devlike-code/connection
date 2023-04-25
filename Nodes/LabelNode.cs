@@ -41,9 +41,8 @@ namespace connection.Nodes
 
             if (GraphInternals.Selected.Contains(this))
             {
-                graphics.DrawRectangle(Tint.Yellow, GetBounds(graphics));
+                graphics.DrawRectangle(Tint.Yellow, GetBounds(graphics));                
             }
-
         }
 
         public override Float4 GetBounds(IGraphics graphics)
@@ -54,7 +53,7 @@ namespace connection.Nodes
                 X = Source.Origin.X + Origin.X,
                 Y = Source.Origin.Y + Origin.Y,
                 W = Math.Max(10.0f, measure.X),
-                H = measure.Y
+                H = Math.Max(14.0f, measure.Y),                
             };
 
             return LastBounds;

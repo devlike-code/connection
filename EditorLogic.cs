@@ -37,6 +37,8 @@ namespace connection
     public enum LogicOutputEvent
     {
         DeselectAll,
+        StartMoving,
+        CancelMoving,
         CreateNode,
         CancelSelect,
         CancelConnect,
@@ -44,6 +46,8 @@ namespace connection
         EndRectSelect,
         StartConnect,
         EndConnect,
+        EnterTextEdit,
+        CancelTextEdit,
     }
 
     public class NodeModeLogicNode : EditorLogicNode
@@ -55,12 +59,24 @@ namespace connection
             if (from is NodeModeLogicNode)
             {
                 if (transition == "esc")
-                {
+                {                    
                     Logic.SendOutputEvent(LogicOutputEvent.DeselectAll);
                 }
                 else if (transition == "dblclick empty")
                 {
                     Logic.SendOutputEvent(LogicOutputEvent.CreateNode);
+                }
+                else if (transition == "dblclick node")
+                {
+                    Logic.SendOutputEvent(LogicOutputEvent.EnterTextEdit);
+                }
+                else if (transition.StartsWith("mousedown right"))
+                {
+                    Logic.SendOutputEvent(LogicOutputEvent.StartMoving);
+                }
+                else if (transition.StartsWith("mouseup right"))
+                {
+                    Logic.SendOutputEvent(LogicOutputEvent.CancelMoving);
                 }
             }
             else if (from is RectSelectLogicNode)
@@ -72,7 +88,7 @@ namespace connection
             }
             else if (from is ConnectLogicNode)
             {
-                if (transition == "esc" || transition == "mouseup empty")
+                if (transition == "esc" || transition == "mouseup left empty")
                 {
                     Logic.SendOutputEvent(LogicOutputEvent.CancelConnect);
                 }
@@ -92,7 +108,7 @@ namespace connection
         {
             if (from is NodeModeLogicNode)
             {
-                if (transition == "mousedown empty")
+                if (transition == "mousedown left empty")
                 {
                     Logic.SendOutputEvent(LogicOutputEvent.StartRectSelect);
                 }
@@ -108,7 +124,7 @@ namespace connection
         {
             if (from is NodeModeLogicNode)
             {
-                if (transition == "mousedown node")
+                if (transition == "mousedown left node")
                 {
                     Logic.SendOutputEvent(LogicOutputEvent.StartConnect);
                 }
@@ -124,7 +140,7 @@ namespace connection
         {
             if (from is ConnectLogicNode)
             {
-                if (transition == "mouseup node")
+                if (transition == "mouseup left node")
                 {
                     Logic.SendOutputEvent(LogicOutputEvent.EndConnect);
                 }
@@ -152,6 +168,9 @@ namespace connection
         protected ConnectLogicNode modeConnect;
         protected InvalidationLogicNode invalidation;
 
+        public bool IsMoving = false;
+        public Float2 MoveOrigin = Float2.Zero;
+
         public bool IsRectSelecting() => CurrentNode == modeRectSelect;
 
         public bool IsConnecting() => CurrentNode == modeConnect;
@@ -166,16 +185,21 @@ namespace connection
 
             modeNode.Connect("esc", modeNode);
             modeNode.Connect("dblclick empty", modeNode);
-            modeNode.Connect("mousedown empty", modeRectSelect);
-            modeNode.Connect("mousedown node", modeConnect);
+            modeNode.Connect("dblclick node", modeNode);
+            modeNode.Connect("mousedown left empty", modeRectSelect);
+            modeNode.Connect("mousedown left node", modeConnect);
+            modeNode.Connect("mousedown right empty", modeNode);
+            modeNode.Connect("mousedown right node", modeNode);
+            modeNode.Connect("mouseup right empty", modeNode);
+            modeNode.Connect("mouseup right node", modeNode);
 
             modeRectSelect.Connect("esc", modeNode);
-            modeRectSelect.Connect("mouseup empty", invalidation);
-            modeRectSelect.Connect("mouseup node", invalidation);
+            modeRectSelect.Connect("mouseup left empty", invalidation);
+            modeRectSelect.Connect("mouseup left node", invalidation);
 
             modeConnect.Connect("esc", modeNode);
-            modeConnect.Connect("mouseup empty", modeNode);
-            modeConnect.Connect("mouseup node", invalidation);
+            modeConnect.Connect("mouseup left empty", modeNode);
+            modeConnect.Connect("mouseup left node", invalidation);
 
             invalidation.Connect("", modeNode);
 

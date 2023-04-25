@@ -5,7 +5,7 @@
         Add, Remove, Edit
     }
 
-    public delegate void NodeMove(Node movedNode, int dx, int dy);
+    public delegate void NodeMove(Node movedNode, Float2 oldPos, Float2 newPos);
     public delegate void NodeTagChanged(Node movedNode, string key, string value, NodeTagChange change);    
 
     public abstract class Node : IComparable<Node>
@@ -89,12 +89,13 @@
         public bool IsUnder(IGraphics graphics, Float4 rect) 
             => GetBounds(graphics).IntersectsWith(rect);
 
-        public void Move(int dx, int dy)
+        public void Move(float dx, float dy)
         {
+            var oldPos = new Float2 { X = Origin.X, Y = Origin.Y };
             Origin.X += dx;
             Origin.Y += dy;
 
-            OnNodeMove?.Invoke(this, dx, dy);
+            OnNodeMove?.Invoke(this, oldPos, Origin);
         }
 
         public int CompareTo(Node? other)

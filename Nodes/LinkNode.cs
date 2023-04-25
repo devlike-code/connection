@@ -3,6 +3,8 @@ namespace connection.Nodes
 {
     public class LinkNode : Node
     {
+        public bool SideMoved = false;
+
         public LinkNode(Node source, Node target, bool bothWays)
             : base((source.Origin + target.Origin) * 0.5f, true, true)
         {
@@ -11,7 +13,32 @@ namespace connection.Nodes
             Target = target;
             Dual = bothWays;
 
+            source.OnNodeMove += Source_OnNodeMove;
+            target.OnNodeMove += Target_OnNodeMove;
+
             AddTag("Label", bothWays ? "<->" : "->");
+        }
+
+        private void Source_OnNodeMove(Node movedNode, Float2 oldPos, Float2 newPos)
+        {
+            if (GraphInternals.Selected.Contains(Target)) return;
+
+            var oldOrigin = (oldPos + Target.Origin) * 0.5f;
+            var delta = Origin - oldOrigin;
+
+            var newOrigin = (newPos + Target.Origin) * 0.5f;
+            Origin = newOrigin + delta;
+        }
+
+        private void Target_OnNodeMove(Node movedNode, Float2 oldPos, Float2 newPos)
+        {
+            if (GraphInternals.Selected.Contains(Source)) return;
+
+            var oldOrigin = (Source.Origin + oldPos) * 0.5f;
+            var delta = Origin - oldOrigin;
+
+            var newOrigin = (Source.Origin + newPos) * 0.5f;
+            Origin = newOrigin + delta;
         }
 
         public override void Draw(IGraphics graphics)

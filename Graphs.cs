@@ -1,5 +1,7 @@
 ﻿using connection.Nodes;
 
+using System.Xml.Linq;
+
 namespace connection
 {
     // maybe remove?
@@ -34,6 +36,7 @@ namespace connection
         public EditorLogic Logic = new();
         public Float4? SelectingRect = null;
         public Node? ConnectingStartNode = null;
+        public Node? EditingLabelNode = null;
 
         public event GraphAddNode? OnAddNode;
         public event GraphDeleteNodes? OnDeleteNodes;
@@ -50,8 +53,13 @@ namespace connection
         {
             switch (e)
             {
-                case LogicOutputEvent.DeselectAll: 
-                    Select(); 
+                case LogicOutputEvent.CancelTextEdit:
+                    EditingLabelNode = null;
+                    break;
+                case LogicOutputEvent.DeselectAll:
+                    EditingLabelNode = null;
+                    ConnectingStartNode = null;
+                    Select();
                     break;
                 case LogicOutputEvent.CreateNode: 
                     AddDotNode(Rendering.Mouse); 
@@ -72,7 +80,7 @@ namespace connection
                         GraphInternals.Selected.Clear();
                         foreach (var n in Nodes)
                         {
-                            if (n != null && n.Alive && n.GetBounds().IntersectsWith(SelectingRect.Value))
+                            if (n != null && n.Alive && n.GetBounds().IntersectsWith(SelectingRect.Value.Normalized()))
                             {
                                 GraphInternals.Selected.Add(n);
                             }
@@ -92,7 +100,8 @@ namespace connection
                 case LogicOutputEvent.EndConnect:
                     {
                         var end = GraphInternals.Hovered.First();
-                        if (end.CanConnect)
+                        
+                        if ((end != ConnectingStartNode) && end.CanConnect)
                         {
                             AddLinkNode(ConnectingStartNode, end);
                         }
@@ -100,7 +109,64 @@ namespace connection
                         Logic.Queue("");
                     }
                     break;
+                case LogicOutputEvent.StartMoving:
+                    if (GraphInternals.Hovered.Count > 0)
+                    {
+                        GraphInternals.Selected.Clear();
+                        GraphInternals.Selected.Add(GraphInternals.Hovered.First());
+                    }
+
+                    foreach (var node in GraphInternals.Selected)
+                    {
+                        if (node is LinkNode link)
+                            link.SideMoved = false;
+                    }
+
+                    Logic.IsMoving = true;
+                    Logic.MoveOrigin = Rendering.Mouse;
+                    break;
+                case LogicOutputEvent.CancelMoving:
+                    Logic.IsMoving = false;
+                    break;
+                case LogicOutputEvent.EnterTextEdit:
+                    {
+                        var node = GraphInternals.Hovered.First();
+
+                        if (node is LabelNode label)
+                        {
+                            GraphInternals.Selected.Clear();
+                            GraphInternals.Selected.Add(node);
+                            EditingLabelNode = label;
+                        }
+                        else
+                        {
+                            Logic.Queue("esc");
+                        }
+                    }
+                    break;
             }
+        }
+
+        public Float2 UpdateMouseMoveDelta(Float2 newPosition)
+        {
+            var delta = newPosition - Logic.MoveOrigin;
+            Logic.MoveOrigin = newPosition;
+
+            foreach (var node in GraphInternals.Selected)
+            {
+                if (node is LinkNode link)
+                    link.SideMoved = false;
+            }
+
+            foreach (var node in GraphInternals.Selected)
+            {
+                if (!(node is LabelNode) || (node is LabelNode && !GraphInternals.Selected.Contains(node.Source)))
+                {
+                    node.Move(delta.X, delta.Y);
+                }
+            }
+
+            return delta;
         }
 
         public Node AddDotNode(Float2 position)

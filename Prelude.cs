@@ -146,6 +146,15 @@ namespace connection
             if (Y > rect.Y + rect.H || rect.Y > Y + H) return false;
             return true;
         }
+
+        public Float4 Normalized()
+        {
+            var x = Math.Min(this.X + this.W, this.X);
+            var y = Math.Min(this.Y + this.H, this.Y);
+            var w = Math.Abs(this.W);
+            var h = Math.Abs(this.H);
+            return new Float4 { X = x, Y = y, W = w, H = h };
+        }
     }
 
     public interface IGraphics
@@ -158,8 +167,8 @@ namespace connection
 
         public void DrawCurve(Tint tint, List<Float2> points, int lineWidth = 1);
 
-        public void DrawArrow(Tint tint, List<Float2> points, bool bothEnds, int lineWidth = 1, int headWidth = 2, int headHeight = 5, int headDistance = 0);
-
+        public void DrawArrow(Tint tint, List<Float2> points, bool bothEnds, int lineWidth = 1, int headWidth = 2, int headHeight = 5, int headDistance = 0, bool dashed = false);
+        
         public void DrawText(Tint tint, Float2 origin, string text);
 
         public void DrawRectangle(Tint tint, Float4 rect, int lineWidth = 1);
