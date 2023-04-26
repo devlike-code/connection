@@ -5,12 +5,21 @@ namespace connection.Nodes
     {
         public LabelNode(Float2 xy, Node? source = null) : base(xy, false, false)
         {
+            Depth = 0;
+            ExportDepth = 0;
+
             Source = source;
             if (source != null)
             {
                 this.OnNodeTagChanged += LabelNode_OnNodeTagChanged;                
                 this.AddTag("Label", source.GetTag("Label"));
             }
+        }
+
+        public override string Export()
+        {
+            var tags = string.Join("; ", Tags.Select(tag => $"{tag.Key}: \"{tag.Value}\""));
+            return $"label\t|\t{Id}\t|\t{Source.Id}\t|\t0\t|\t{tags}";
         }
 
         private void LabelNode_OnNodeTagChanged(Node movedNode, string key, string value, NodeTagChange change)

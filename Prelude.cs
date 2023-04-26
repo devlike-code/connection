@@ -167,9 +167,11 @@ namespace connection
 
         public void DrawCurve(Tint tint, List<Float2> points, int lineWidth = 1);
 
-        public void DrawArrow(Tint tint, List<Float2> points, bool bothEnds, int lineWidth = 1, int headWidth = 2, int headHeight = 5, int headDistance = 0, bool dashed = false);
+        public void DrawArrow(Tint tint, List<Float2> points, bool bothEnds = false, int lineWidth = 1, int headWidth = 2, int headHeight = 5, int headDistance = 0, bool dashed = false);
         
         public void DrawText(Tint tint, Float2 origin, string text);
+
+        public void DrawArc(Tint tint, Float4 rect, int initial = 0, int arc = 360, int lineWidth = 1);
 
         public void DrawRectangle(Tint tint, Float4 rect, int lineWidth = 1);
 

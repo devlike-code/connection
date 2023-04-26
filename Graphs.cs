@@ -1,5 +1,6 @@
 ﻿using connection.Nodes;
 
+using System.IO;
 using System.Xml.Linq;
 
 namespace connection
@@ -7,9 +8,6 @@ namespace connection
     // maybe remove?
     public static class GraphInternals
     {
-        public static HashSet<int> Serialized = new();
-        public static bool MinifySerialization;
-
         public static HashSet<Node> Moved = new();
         public static HashSet<Node> Hovered = new();
         public static HashSet<Node> Selected = new();
@@ -23,28 +21,48 @@ namespace connection
         Connection
     }
 
-    public delegate void GraphAddNode(object sender, Node node);
-    public delegate void GraphDeleteNodes(object sender, List<Node> nodes);
-    public delegate void GraphHighlightNodes(object sender, List<Node> nodes);
-    public delegate void GraphSelectionChanged(object sender, List<Node> nodes);
-    public delegate void GraphEditorModeChanged(object sender, EditorMode mode);
 
-    public class ConnectionGraphEditorTrait
+    public class GraphEditorTrait
     {
-        public readonly List<Node> Nodes = new();
-
+        public List<Node> Nodes = new();
+        
         public EditorLogic Logic = new();
+        public bool IsLinkingBothWays = false;
         public Float4? SelectingRect = null;
         public Node? ConnectingStartNode = null;
         public Node? EditingLabelNode = null;
 
-        public event GraphAddNode? OnAddNode;
-        public event GraphDeleteNodes? OnDeleteNodes;
-        public event GraphHighlightNodes? OnHighlightNodes;
-        public event GraphSelectionChanged? OnSelectionChanged;
-        public event GraphEditorModeChanged? OnEditorModeChanged;
+        public void LoadFromFile(string filename)
+        {
+            Reset();
 
-        public ConnectionGraphEditorTrait()
+            foreach (var line in GraphData.LoadFromFile(filename).Data)
+            {
+                var node = Node.Create(ref Nodes, line.Kind, line.Id, line.SourceId, line.TargetId, line.Tags);
+                Nodes.Add(node);
+            }
+        }
+
+        public void SaveToFile(string filename) 
+        {
+            Nodes.Sort((x, y) =>
+            {
+                if (x.ExportDepth == y.ExportDepth)
+                    return x.RecurseExportDepth().CompareTo(y.RecurseExportDepth());
+                else
+                    return -x.ExportDepth.CompareTo(y.ExportDepth);
+            });
+
+            var export = new List<string>();
+
+            export.Add($"type\t|\tid\t|\tsrc\t|\ttgt\t|\ttags");
+            foreach (var node in Nodes)
+                export.Add(node.Export());
+
+            File.WriteAllLines(filename, export.ToArray());
+        }
+
+        public GraphEditorTrait()
         {
             Logic.OnTriggerOutputEvent += PerformStateChange;
         }
@@ -103,7 +121,7 @@ namespace connection
                         
                         if ((end != ConnectingStartNode) && end.CanConnect)
                         {
-                            AddLinkNode(ConnectingStartNode, end);
+                            AddLinkNode(ConnectingStartNode, end, IsLinkingBothWays);
                         }
                         ConnectingStartNode = null;
                         Logic.Queue("");
@@ -130,18 +148,20 @@ namespace connection
                     break;
                 case LogicOutputEvent.EnterTextEdit:
                     {
+                        var label = GraphInternals.Hovered.First() as LabelNode;
+                        GraphInternals.Selected.Clear();
+                        GraphInternals.Selected.Add(label);
+                        EditingLabelNode = label;
+                    }
+                    break;
+                case LogicOutputEvent.CreateLoop:
+                    {
                         var node = GraphInternals.Hovered.First();
-
-                        if (node is LabelNode label)
+                        if (node.CanConnect)
                         {
-                            GraphInternals.Selected.Clear();
-                            GraphInternals.Selected.Add(node);
-                            EditingLabelNode = label;
-                        }
-                        else
-                        {
-                            Logic.Queue("esc");
-                        }
+                            AddLinkNode(node, node);
+                        }                        
+                        Logic.Queue("esc");
                     }
                     break;
             }
@@ -169,24 +189,38 @@ namespace connection
             return delta;
         }
 
-        public Node AddDotNode(Float2 position)
+        public Node AddDotNode(Float2 position, bool withLabel = true)
         {
             var node = new DotNode(position);
             Nodes.Add(node);
 
-            var label = new LabelNode(new Float2 { X = 10, Y = 10 }, node);
-            Nodes.Add(label);
+            if (withLabel)
+            {
+                var label = new LabelNode(new Float2 { X = 10, Y = 10 }, node);
+                Nodes.Add(label);
+            }
 
             return node;
         }
 
-        public Node AddLinkNode(Node a, Node b)
+        public Node AddLinkNode(Node a, Node b, bool bothWays = false, bool withLabel = true)
         {
-            var node = new LinkNode(a, b, false);
+            var node = new LinkNode(a, b, bothWays);
             Nodes.Add(node);
 
-            var label = new LabelNode(new Float2 { X = 10, Y = 0 }, node);
-            Nodes.Add(label);
+            if (withLabel)
+            {
+                var label = new LabelNode(new Float2 { X = 10, Y = 0 }, node);
+                Nodes.Add(label);
+            }
+
+            return node;
+        }
+
+        public Node AddLabelNode(Node a)
+        {
+            var node = new LabelNode(new Float2 { X = 10, Y = 0 }, a);
+            Nodes.Add(node);
 
             return node;
         }
@@ -197,13 +231,55 @@ namespace connection
             
             foreach (var node in nodes)
                 GraphInternals.Selected.Add(node);
-
-            OnSelectionChanged?.Invoke(this, nodes.ToList());
         }
 
         public void UpdateMousePosition(Float2 xy)
         {
             Rendering.Mouse = xy;
+        }
+
+        public void Reset()
+        {
+            SelectingRect = null;
+            ConnectingStartNode = null;
+            EditingLabelNode = null;
+            Nodes.Clear();
+            Logic.Reset();
+            
+            DotNode.Identifier = 'a';
+            Node.Count = 0;
+        }
+
+        public void DeleteSelected()
+        {
+            HashSet<int> idsToDelete = new();
+            foreach (var n in GraphInternals.Selected)
+            {
+                idsToDelete.Add(n.Id);
+            }
+
+            foreach (var n in Nodes)
+            {
+                if (idsToDelete.Contains(n.Id)) continue;
+                if (n.Source != null)
+                {
+                    if (idsToDelete.Contains(n.Source.Id))
+                    {
+                        idsToDelete.Add(n.Id);
+                    }
+                }
+
+                if (n.Target != null)
+                {
+                    if (idsToDelete.Contains(n.Target.Id))
+                    {
+                        idsToDelete.Add(n.Id);
+                    }
+                }
+            }
+
+            Nodes.RemoveAll(x => idsToDelete.Contains(x.Id));
+            GraphInternals.Selected.Clear();
         }
     }
 }

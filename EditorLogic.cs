@@ -1,4 +1,6 @@
 ﻿
+using connection.Nodes;
+
 namespace connection
 {
     public abstract class EditorLogicNode
@@ -48,6 +50,7 @@ namespace connection
         EndConnect,
         EnterTextEdit,
         CancelTextEdit,
+        CreateLoop,
     }
 
     public class NodeModeLogicNode : EditorLogicNode
@@ -68,7 +71,10 @@ namespace connection
                 }
                 else if (transition == "dblclick node")
                 {
-                    Logic.SendOutputEvent(LogicOutputEvent.EnterTextEdit);
+                    if (GraphInternals.Hovered.First() is LabelNode)
+                        Logic.SendOutputEvent(LogicOutputEvent.EnterTextEdit);
+                    else
+                        Logic.SendOutputEvent(LogicOutputEvent.CreateLoop);
                 }
                 else if (transition.StartsWith("mousedown right"))
                 {

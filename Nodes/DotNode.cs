@@ -10,9 +10,20 @@ namespace connection.Nodes
 {
     public class DotNode : Node
     {
+        public static char Identifier = 'a';
+
         public DotNode(Float2 xy) : base(xy, true, true)
         {
-            AddTag("Label", $"Node {Id}");
+            Depth = 1;
+            ExportDepth = 2;
+
+            AddTag("Label", $"{Identifier++}");
+        }
+
+        public override string Export()
+        {
+            var tags = string.Join("; ", Tags.Select(tag => $"{tag.Key}: \"{tag.Value}\""));
+            return $"dot\t\t|\t{Id}\t|\t0\t|\t0\t|\t{tags}";
         }
 
         public override void Draw(IGraphics graphics)
