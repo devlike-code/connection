@@ -1,5 +1,4 @@
-﻿using System.Xml.Linq;
-
+﻿
 namespace connection.UseCase
 {
     public class Digraph
@@ -66,7 +65,7 @@ namespace connection.UseCase
             public bool IsIdentity => (Source == Target) && (Source == Id);
             public bool IsRelation => Source != Target;
 
-            public int CountOutgoing
+            public int OutgoingRelationsCount
             {
                 get
                 {
@@ -75,7 +74,17 @@ namespace connection.UseCase
                 }
             }
 
-            public int CountIncoming
+            public List<DigraphNode> OutgoingRelations
+            {
+                get
+                {
+                    List<DigraphNode> nodes = new();
+                    if (!parent.EdgesOut.ContainsKey(this.Id)) return nodes;
+                    return parent.EdgesOut[this.Id].Values.ToList();
+                }
+            }
+
+            public int IncomingRelationsCount
             {
                 get
                 {
@@ -83,6 +92,30 @@ namespace connection.UseCase
                     return parent.EdgesIn[this.Id].Count;
                 }
             }
+
+            public List<DigraphNode> IncomingRelations
+            {
+                get
+                {
+                    List<DigraphNode> nodes = new();
+                    if (!parent.EdgesIn.ContainsKey(this.Id)) return nodes;
+                    return parent.EdgesIn[this.Id].Values.ToList();
+                }
+            }
+
+            public List<DigraphNode> OutgoingNeighbors
+                => OutgoingRelations
+                    .Select(x => x.Target)
+                    .ToHashSet()
+                    .Select(x => parent.Index[x])
+                    .ToList();
+
+            public List<DigraphNode> IncomingNeighbors
+                => IncomingRelations
+                    .Select(x => x.Target)
+                    .ToHashSet()
+                    .Select(x => parent.Index[x])
+                    .ToList();
         }
 
         public SparseSet Nodes;
