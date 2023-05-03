@@ -86,10 +86,7 @@ public class WinformsGraphics : IGraphics
             else
             {
                 var path = new GraphicsPath();
-                foreach (var xy in points)
-                {
-                    path.AddCurve(new Point((int)xy.X, (int)xy.Y));
-                }
+                path.AddCurve(points.Select(xy => new PointF(xy.X, xy.Y)));
                 Graphics.DrawPath(p, path);
             }
         }
@@ -109,10 +106,7 @@ public class WinformsGraphics : IGraphics
         using (var pen = new Pen(tint.ToColor(), lineWidth))
         {
             var path = new GraphicsPath();
-            foreach (var xy in points)
-            {
-                path.AddCurve(new Point((int)xy.X, (int)xy.Y));
-            }
+            path.AddCurve(points.Select(xy => new PointF(xy.X, xy.Y)));
             Graphics.DrawPath(pen, path);
         }
     }
