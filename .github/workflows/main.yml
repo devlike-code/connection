@@ -17,7 +17,7 @@ jobs:
         with:
           dotnet-version: '6.0.x'
       - name: Build NuGet packages
-        run: dotnet pack -o bin/packages -c Release /p:Version=1.0.${{ github.run_number }}
+        run: dotnet pack DevLike.Connection.sln -o bin/packages -c Release /p:Version=1.0.${{ github.run_number }}
       - uses: actions/upload-artifact@main
         with:
           name: Nuget Packages
