@@ -1,7 +1,6 @@
-﻿using connection.Nodes;
-
-using System.IO;
+﻿using System.IO;
 using System.Xml.Linq;
+using connection.Nodes;
 
 namespace connection
 {
@@ -117,6 +116,11 @@ namespace connection
                     break;
                 case LogicOutputEvent.EndConnect:
                     {
+                        if (ConnectingStartNode == null)
+                        {
+                            return;
+                        }
+
                         var end = GraphInternals.Hovered.First();
                         
                         if ((end != ConnectingStartNode) && end.CanConnect)
@@ -148,10 +152,12 @@ namespace connection
                     break;
                 case LogicOutputEvent.EnterTextEdit:
                     {
-                        var label = GraphInternals.Hovered.First() as LabelNode;
-                        GraphInternals.Selected.Clear();
-                        GraphInternals.Selected.Add(label);
-                        EditingLabelNode = label;
+                        if (GraphInternals.Hovered.First() is LabelNode label)
+                        {
+                            GraphInternals.Selected.Clear();
+                            GraphInternals.Selected.Add(label);
+                            EditingLabelNode = label;
+                        }
                     }
                     break;
                 case LogicOutputEvent.CreateLoop:
@@ -180,7 +186,7 @@ namespace connection
 
             foreach (var node in GraphInternals.Selected)
             {
-                if (!(node is LabelNode) || (node is LabelNode && !GraphInternals.Selected.Contains(node.Source)))
+                if (!(node is LabelNode) || (node is LabelNode && node.Source != null && !GraphInternals.Selected.Contains(node.Source)))
                 {
                     node.Move(delta.X, delta.Y);
                 }

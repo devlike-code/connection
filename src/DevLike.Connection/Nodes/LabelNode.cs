@@ -19,7 +19,7 @@ namespace connection.Nodes
         public override string Export()
         {
             var tags = string.Join("; ", Tags.Select(tag => $"{tag.Key}: \"{tag.Value}\""));
-            return $"label\t|\t{Id}\t|\t{Source.Id}\t|\t0\t|\t{tags}";
+            return $"label\t|\t{Id}\t|\t{Source?.Id ?? 1}\t|\t0\t|\t{tags}";
         }
 
         private void LabelNode_OnNodeTagChanged(Node movedNode, string key, string value, NodeTagChange change)
@@ -35,6 +35,11 @@ namespace connection.Nodes
 
         public override void Draw(IGraphics graphics)
         {
+            if (Source == null)
+            {
+                throw new Exception("This should not happen!");
+            }
+
             if (IsUnder(graphics, Rendering.Mouse))
             {
                 GraphInternals.Hovered.Add(this);
@@ -56,6 +61,11 @@ namespace connection.Nodes
 
         public override Float4 GetBounds(IGraphics graphics)
         {
+            if (Source == null)
+            {
+                throw new Exception("This should not happen!");
+            }
+            
             var measure = graphics.GetStringWidth(this.GetTag("Label"));            
             LastBounds = new Float4
             {

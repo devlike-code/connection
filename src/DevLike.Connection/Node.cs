@@ -25,10 +25,8 @@ namespace connection
 
         public int RecurseExportDepth()
         {
-            var selfSource = Source == null || Source == this;
-            var selfTarget = Target == null || Target == this;
-            var s = selfSource ? 1 : Source.RecurseExportDepth() * Source.Id;
-            var t = selfTarget ? 1 : Target.RecurseExportDepth() * Target.Id;
+            var s = (Source == null || Source == this) ? 1 : Source.RecurseExportDepth() * Source.Id;
+            var t = (Target == null || Target == this) ? 1 : Target.RecurseExportDepth() * Target.Id;
             return s * t;
         }
 
@@ -141,6 +139,12 @@ namespace connection
                     {
                         var source = nodes.Find(x => x.Id == src);
                         var target = nodes.Find(x => x.Id == tgt);
+
+                        if (source == null || target == null)
+                        {
+                            // TODO: Make a custom exception for this
+                            throw new Exception("SYSTEM FAILED, LINK HAS NO PARENTS :( (Link is Bruce Wayne)");
+                        }
 
                         node = new LinkNode(source, target, tags.ContainsKey("BothWays"));
                         node.Id = id;

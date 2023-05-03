@@ -77,9 +77,9 @@ namespace connection
             return (float)Math.Sqrt(dxx + dyy);            
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (obj is Float2 f2)
+            if (obj != null && obj is Float2 f2)
             {
                 return this == f2;
             }

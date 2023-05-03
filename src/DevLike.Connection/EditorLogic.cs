@@ -165,7 +165,7 @@ namespace connection
 
     public class EditorLogic
     {
-        public EditorLogicNode CurrentNode = null;
+        public EditorLogicNode CurrentNode;
 
         public TriggerOutputEvent? OnTriggerOutputEvent;
         

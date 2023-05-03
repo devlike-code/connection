@@ -6,8 +6,8 @@ namespace connection.UseCase
 
     public class FSM
     {
-        public event StateTransitionSucceeded OnStateTransitionSucceeded;
-        public event StateTransitionFailed OnStateTransitionFailed;
+        public event StateTransitionSucceeded? OnStateTransitionSucceeded;
+        public event StateTransitionFailed? OnStateTransitionFailed;
 
         protected HashSet<string> Nodes = new();
         protected Dictionary<int, string> Index = new();

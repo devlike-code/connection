@@ -34,12 +34,13 @@ namespace connection.Nodes
         public override string Export()
         {
             var tags = string.Join("; ", Tags.Select(tag => $"{tag.Key}: \"{tag.Value}\""));
-            return $"link\t|\t{Id}\t|\t{Source.Id}\t|\t{Target.Id}\t|\t{tags}";
+            return $"link\t|\t{Id}\t|\t{Source?.Id ?? 1}\t|\t{Target?.Id ?? 1}\t|\t{tags}";
         }
 
         private void Source_OnNodeMove(Node movedNode, Float2 oldPos, Float2 newPos)
         {
-            if (GraphInternals.Selected.Contains(Target)) return;
+            if (Target == null || GraphInternals.Selected.Contains(Target))
+                return;
 
             var oldOrigin = (oldPos + Target.Origin) * 0.5f;
             var delta = Origin - oldOrigin;
@@ -50,7 +51,11 @@ namespace connection.Nodes
 
         private void Target_OnNodeMove(Node movedNode, Float2 oldPos, Float2 newPos)
         {
-            if (GraphInternals.Selected.Contains(Source)) return;
+            if (Source == null)
+                throw new Exception("This should not happen!");
+
+            if (GraphInternals.Selected.Contains(Source))
+                return;
 
             var oldOrigin = (Source.Origin + oldPos) * 0.5f;
             var delta = Origin - oldOrigin;
@@ -61,6 +66,9 @@ namespace connection.Nodes
 
         public override void Draw(IGraphics graphics)
         {
+            if (Source == null || Target == null)
+                throw new Exception("This should not happen!");
+
             if (Source.Origin == Target.Origin)
             {
                 var v = (Origin + Source.Origin) * 0.5f;
