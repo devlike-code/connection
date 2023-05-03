@@ -57,19 +57,28 @@ public class ConnectionGraphControl : Drawable
         editor = new GraphEditorTrait();
         graphics = new WinformsGraphics();
 
+        Shown += ConnectionGraphControl_Shown;
         Paint += ConnectionGraphControl_Paint;
-        TextInput += ConnectionGraphControl_KeyPress;
-        KeyUp += ConnectionGraphControl_KeyUp;
-        KeyDown += ConnectionGraphControl_KeyDown;
         MouseDoubleClick += ConnectionGraphControl_MouseDoubleClick;
         MouseDown += ConnectionGraphControl_MouseDown;
         MouseMove += ConnectionGraphControl_MouseMove;
         MouseUp += ConnectionGraphControl_MouseUp;
 
+    }
+
+    private void ConnectionGraphControl_Shown(object? sender, EventArgs args)
+    {
+        if (ParentWindow != null)
+        {
+            ParentWindow.TextInput += ConnectionGraphControl_KeyPress;
+            ParentWindow.KeyUp += ConnectionGraphControl_KeyUp;
+            ParentWindow.KeyDown += ConnectionGraphControl_KeyDown;
+        }
+
         Application.Instance.AsyncInvoke(DrawLoop);
     }
 
-    async void DrawLoop()
+    private async void DrawLoop()
     {
         while (true)
         {
