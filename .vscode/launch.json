@@ -8,7 +8,7 @@
             "name": "Test (Gtk)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build-test-linux",
+            "preLaunchTask": "build-test-gtk",
             "program": "${workspaceFolder}/test/DevLike.Test.EtoForms/DevLike.Test.EtoForms.Gtk/bin/Debug/net6.0/DevLike.Test.EtoForms.Gtk.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
