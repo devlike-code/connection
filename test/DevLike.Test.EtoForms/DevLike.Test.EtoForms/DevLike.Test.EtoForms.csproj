@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Eto.Forms" Version="2.7.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\DevLike.Connection.Control\DevLike.Connection.Control.csproj" />
+    <ProjectReference Include="..\..\..\src\DevLike.Connection\DevLike.Connection.csproj" />
+  </ItemGroup>
+</Project>
