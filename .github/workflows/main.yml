@@ -1,0 +1,26 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+      - name: Build NuGet packages
+        run: dotnet pack -o bin/packages -c Release /p:Version=1.0.${{ github.run_number }}
+      - uses: actions/upload-artifact@main
+        with:
+          name: Nuget Packages
+          path: |
+            bin/packages/*.nupkg
+          if-no-files-found: error
