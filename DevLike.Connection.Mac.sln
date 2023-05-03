@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Eto", "Eto", "{2FB55514-932
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLike.Test.EtoForms", "test\DevLike.Test.EtoForms\DevLike.Test.EtoForms\DevLike.Test.EtoForms.csproj", "{F9218499-DBCF-4F01-8A7C-8E1CE154560F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLike.Test.EtoForms.Mac", "test\DevLike.Test.EtoForms\DevLike.Test.EtoForms.Mac\DevLike.Test.EtoForms.Mac.csproj", "{6CECE83A-603B-439A-9816-1767659C6C28}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLike.Test.EtoForms.MacOS", "test\DevLike.Test.EtoForms\DevLike.Test.EtoForms.MacOS\DevLike.Test.EtoForms.MacOS.csproj", "{6CECE83A-603B-439A-9816-1767659C6C28}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLike.Connection.Control", "src\DevLike.Connection.Control\DevLike.Connection.Control.csproj", "{743ED379-5241-4E7F-BAE3-94607F349919}"
 EndProject

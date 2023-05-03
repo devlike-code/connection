@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0-macos</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <SupportedOSPlatformVersion>10.14</SupportedOSPlatformVersion>
+    <RuntimeIdentifier>osx-arm64</RuntimeIdentifier>
+    <ApplicationId>EtoForms.Test.DevLike</ApplicationId>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\DevLike.Test.EtoForms\DevLike.Test.EtoForms.csproj" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <PackageReference Include="Eto.Platform.macOS" Version="2.7.5" />
+  </ItemGroup>
+</Project>

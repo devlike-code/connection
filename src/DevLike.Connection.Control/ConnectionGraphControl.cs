@@ -1,6 +1,4 @@
-﻿using System;
-using Eto.Forms;
-using System.Runtime.InteropServices;
+﻿using Eto.Forms;
 
 namespace DevLike.Connection.Control;
 
@@ -14,7 +12,6 @@ public class ConnectionGraphControl : Drawable
     public void Clear()
     {
         editor.Reset();
-        Invalidate();
     }
 
     public void StartSave()
@@ -34,7 +31,6 @@ public class ConnectionGraphControl : Drawable
 
             editor.SaveToFile(filePath);
         }
-        Invalidate();
     }
 
     public void StartLoad()
@@ -50,7 +46,6 @@ public class ConnectionGraphControl : Drawable
             try
             {
                 editor.LoadFromFile(openFileDialog.FileName);
-                Invalidate();
             }
             catch { }
         }
@@ -66,12 +61,21 @@ public class ConnectionGraphControl : Drawable
         TextInput += ConnectionGraphControl_KeyPress;
         KeyUp += ConnectionGraphControl_KeyUp;
         KeyDown += ConnectionGraphControl_KeyDown;
-        // MouseClick += ConnectionGraphControl_MouseClick;
         MouseDoubleClick += ConnectionGraphControl_MouseDoubleClick;
         MouseDown += ConnectionGraphControl_MouseDown;
         MouseMove += ConnectionGraphControl_MouseMove;
         MouseUp += ConnectionGraphControl_MouseUp;
-        SizeChanged += ConnectionGraphControl_Resize;
+
+        Application.Instance.AsyncInvoke(DrawLoop);
+    }
+
+    async void DrawLoop()
+    {
+        while (true)
+        {
+            Invalidate();
+            await Task.Delay(10);
+        }
     }
 
     private void ConnectionGraphControl_KeyUp(object? sender, KeyEventArgs e)
@@ -79,7 +83,6 @@ public class ConnectionGraphControl : Drawable
         if (e.Key == Keys.Escape || e.Key == Keys.Enter)
         {
             editor.Logic.Trigger("esc");
-            Invalidate();
         }
         else if (e.Key == Keys.S && e.Modifiers.HasFlag(Keys.Control))
         {
@@ -95,7 +98,6 @@ public class ConnectionGraphControl : Drawable
         }
 
         editor.IsLinkingBothWays = e.Modifiers.HasFlag(Keys.Shift);
-        this.Invalidate();
     }
 
     private void ConnectionGraphControl_MouseClick(object? sender, MouseEventArgs e)
@@ -108,7 +110,6 @@ public class ConnectionGraphControl : Drawable
         {
             editor.Logic.Trigger("click node");
         }
-        Invalidate();
     }
 
     private void ConnectionGraphControl_MouseDoubleClick(object? sender, MouseEventArgs e)
@@ -124,7 +125,6 @@ public class ConnectionGraphControl : Drawable
             {
                 editor.Logic.Trigger("dblclick node");
             }
-            Invalidate();
         }
     }
 
@@ -152,7 +152,6 @@ public class ConnectionGraphControl : Drawable
                 editor.Logic.Trigger("mousedown right node");
             }
         }
-        Invalidate();
     }
 
     private void ConnectionGraphControl_MouseMove(object? sender, MouseEventArgs e)
@@ -175,8 +174,6 @@ public class ConnectionGraphControl : Drawable
         }
 
         editor.IsLinkingBothWays = e.Modifiers.HasFlag(Keys.Shift);
-
-        this.Invalidate();
     }
 
     private void ConnectionGraphControl_MouseUp(object? sender, MouseEventArgs e)
@@ -205,13 +202,11 @@ public class ConnectionGraphControl : Drawable
         }
 
         editor.IsLinkingBothWays = e.Modifiers.HasFlag(Keys.Shift);
-        this.Invalidate();
     }
 
     private void ConnectionGraphControl_Paint(object? sender, PaintEventArgs e)
     {
         e.Graphics.AntiAlias = true;
-        e.Graphics.Clear(Eto.Drawing.Brushes.White);
         graphics.Graphics = e.Graphics;
 
         Rendering.DrawGrid(graphics, this.Width, this.Height);
@@ -240,16 +235,6 @@ public class ConnectionGraphControl : Drawable
         graphics.DrawText(Tint.Yellow, new Float2 { X = 10, Y = 30 }, $"Editing: {editor.EditingLabelNode}");
     }
 
-    private void ConnectionGraphControl_Resize(object? sender, EventArgs e)
-    {
-        if (this.Parent != null)
-        {
-            this.Size = this.Parent.Size;
-        }
-
-        Invalidate();
-    }
-
     private void ConnectionGraphControl_KeyDown(object? sender, KeyEventArgs e)
     {
         if (editor.EditingLabelNode != null)
@@ -263,8 +248,6 @@ public class ConnectionGraphControl : Drawable
                 }
                 editor.EditingLabelNode.AddTag("Label", text);
             }
-
-            Invalidate();
         }
     }
 
@@ -275,8 +258,6 @@ public class ConnectionGraphControl : Drawable
             var text = editor.EditingLabelNode.GetTag("Label");
             text += e.Text;
             editor.EditingLabelNode.AddTag("Label", text);
-
-            Invalidate();
         }
     }
 }

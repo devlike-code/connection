@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": "Test (Gtk)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
+            "preLaunchTask": "build-test-linux",
             "program": "${workspaceFolder}/test/DevLike.Test.EtoForms/DevLike.Test.EtoForms.Gtk/bin/Debug/net6.0/DevLike.Test.EtoForms.Gtk.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
@@ -16,9 +16,14 @@
             "stopAtEntry": false
         },
         {
-            "name": ".NET Core Attach",
+            "name": "Test (macOS)",
             "type": "coreclr",
-            "request": "attach"
+            "request": "launch",
+            "preLaunchTask": "build-test-macos",
+            "program": "${workspaceFolder}/test/DevLike.Test.EtoForms/DevLike.Test.EtoForms.MacOS/bin/Debug/net6.0-macos/osx-arm64/DevLike.Test.EtoForms.MacOS.app/Contents/MacOS/DevLike.Test.EtoForms.MacOS",
+            "args": [],
+            "console": "internalConsole",
+            "stopAtEntry": false
         }
     ]
 }

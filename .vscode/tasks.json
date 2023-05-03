@@ -4,15 +4,29 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "build-test-gtk",
             "command": "dotnet",
             "type": "shell",
             "args": [
                 "build",
                 "test/DevLike.Test.EtoForms/DevLike.Test.EtoForms.Gtk/DevLike.Test.EtoForms.Gtk.csproj",
-                // Ask dotnet build to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
-                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build-test-macos",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "build",
+                "test/DevLike.Test.EtoForms/DevLike.Test.EtoForms.MacOS/DevLike.Test.EtoForms.MacOS.csproj",
+                "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
             "group": "build",
