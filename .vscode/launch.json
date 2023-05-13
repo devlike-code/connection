@@ -5,22 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Test (Gtk)",
+            "name": "Editor (Linux)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build-test-gtk",
-            "program": "${workspaceFolder}/test/DevLike.Test.EtoForms/DevLike.Test.EtoForms.Gtk/bin/Debug/net6.0/DevLike.Test.EtoForms.Gtk.dll",
+            "preLaunchTask": "build-editor-linux",
+            "program": "${workspaceFolder}/src/DevLike.Connection.Editor/DevLike.Connection.Editor.Linux/bin/Debug/net6.0/DevLike.Connection.Editor.Linux.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",
             "stopAtEntry": false
         },
         {
-            "name": "Test (macOS)",
+            "name": "Editor (macOS)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build-test-macos",
-            "program": "${workspaceFolder}/test/DevLike.Test.EtoForms/DevLike.Test.EtoForms.MacOS/bin/Debug/net6.0-macos/osx-arm64/DevLike.Test.EtoForms.MacOS.app/Contents/MacOS/DevLike.Test.EtoForms.MacOS",
+            "preLaunchTask": "build-editor-macos",
+            "program": "${workspaceFolder}/src/DevLike.Connection.Editor/DevLike.Connection.Editor.MacOS/bin/Debug/net6.0-macos/osx-arm64/DevLike.Connection.Editor.MacOS.app/Contents/MacOS/DevLike.Connection.Editor.MacOS",
             "args": [],
             "console": "internalConsole",
             "stopAtEntry": false

@@ -6,7 +6,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\DevLike.Test.EtoForms\DevLike.Test.EtoForms.csproj" />
+    <ProjectReference Include="..\DevLike.Connection.Editor\DevLike.Connection.Editor.csproj" />
   </ItemGroup>
 
   <ItemGroup>

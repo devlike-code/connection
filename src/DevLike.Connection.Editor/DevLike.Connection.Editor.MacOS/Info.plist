@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>DevLike.Test.EtoForms</string>
+	<string>DevLike.Connection.Editor</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.companyname.DevLike.Test.EtoForms</string>
+	<string>com.companyname.DevLike.Connection.Editor</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>

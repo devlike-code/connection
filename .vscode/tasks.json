@@ -4,12 +4,12 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build-test-gtk",
+            "label": "build-editor-linux",
             "command": "dotnet",
             "type": "shell",
             "args": [
                 "build",
-                "test/DevLike.Test.EtoForms/DevLike.Test.EtoForms.Gtk/DevLike.Test.EtoForms.Gtk.csproj",
+                "src/DevLike.Connection.Editor/DevLike.Connection.Editor.Linux/DevLike.Connection.Editor.Linux.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -20,12 +20,12 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "build-test-macos",
+            "label": "build-editor-macos",
             "command": "dotnet",
             "type": "shell",
             "args": [
                 "build",
-                "test/DevLike.Test.EtoForms/DevLike.Test.EtoForms.MacOS/DevLike.Test.EtoForms.MacOS.csproj",
+                "src/DevLike.Connection.Editor/DevLike.Connection.Editor.MacOS/DevLike.Connection.Editor.MacOS.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],

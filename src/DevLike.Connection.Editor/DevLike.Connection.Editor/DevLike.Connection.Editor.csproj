@@ -9,7 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\DevLike.Connection.Control\DevLike.Connection.Control.csproj" />
-    <ProjectReference Include="..\..\..\src\DevLike.Connection\DevLike.Connection.csproj" />
+    <ProjectReference Include="..\..\DevLike.Connection.Control\DevLike.Connection.Control.csproj" />
+    <ProjectReference Include="..\..\DevLike.Connection\DevLike.Connection.csproj" />
   </ItemGroup>
+
 </Project>

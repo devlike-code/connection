@@ -1,14 +1,14 @@
 ﻿using System;
 using Eto.Forms;
 
-namespace DevLike.Test.EtoForms.Wpf
+namespace DevLike.Connection.Editor.Gtk
 {
 	class Program
 	{
 		[STAThread]
 		public static void Main(string[] args)
 		{
-			new Application(Eto.Platforms.Wpf).Run(new MainForm());
+			new Application(Eto.Platforms.Gtk).Run(new MainForm());
 		}
 	}
 }
