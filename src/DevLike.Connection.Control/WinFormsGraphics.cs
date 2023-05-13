@@ -30,9 +30,9 @@ public static class TintExtensions
     {
         switch (tint)
         {
-            case Tint.Background: return Color.FromArgb(255, 35, 35, 35);
-            case Tint.DarkGrey: return Color.FromArgb(255, 20, 20, 20);
-            case Tint.LightGrey: return Color.FromArgb(255, 50, 50, 50);
+            case Tint.Background: return Color.Parse("#232323");
+            case Tint.DarkGrey: return Color.Parse("#141414");
+            case Tint.LightGrey: return Color.Parse("#323232");
             case Tint.White: return Colors.White;
             case Tint.Blue: return Colors.Blue;
             case Tint.Green: return Colors.Green;
@@ -140,7 +140,7 @@ public class WinformsGraphics : IGraphics
     public void FillCircle(Tint tint, Float2 center, float radius, float alpha = 1.0f)
     {
         var color = tint.ToColor();
-        color = Color.FromArgb((int)(alpha * 255.0f), color.Rb, color.Gb, color.Bb);
+        color = Color.FromArgb(color.Rb, color.Gb, color.Bb, (int)(alpha * 255.0f));
         using (var brush = new SolidBrush(color))
         {
             Graphics.FillEllipse(brush, center.X - radius, center.Y - radius,
@@ -151,7 +151,7 @@ public class WinformsGraphics : IGraphics
     public void FillRectangle(Tint tint, Float4 rect, float alpha = 1.0f)
     {
         var color = tint.ToColor();
-        color = Color.FromArgb((int)(alpha * 255.0f), color.Rb, color.Gb, color.Bb);
+        color = Color.FromArgb(color.Rb, color.Gb, color.Bb, (int)(alpha * 255.0f));
 
         using (var brush = new SolidBrush(color))
         {
