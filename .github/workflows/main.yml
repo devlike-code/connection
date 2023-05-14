@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest, macos-13]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -22,6 +22,11 @@ jobs:
                     dotnet workload install macos
               fi
         shell: bash
+      - name: Setup XCode
+        if: runner.os == 'macOS'
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
       - name: Build NuGet packages
         run: dotnet pack DevLike.Connection.sln -o bin/packages -c Release -p:Version=1.0.${{ github.run_number }}
       - name: Build Editor
