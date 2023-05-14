@@ -27,10 +27,10 @@ jobs:
       - name: Build Editor
         run:   |
               if [ "$RUNNER_OS" == "Linux" ]; then
-                    dotnet publish -r linux-x64 --self-contained -c Release -o bin/editor/linux-x64 /p:Version=1.0.${{ github.run_number }} src/DevLike.Connection.Editor/DevLike.Connection.Editor.Linux/DevLike.Connection.Editor.Linux.csproj
-                    dotnet publish -r linux-arm64 --self-contained -c Release -o bin/editor/linux-arm64 -p:Version=1.0.${{ github.run_number }} src/DevLike.Connection.Editor/DevLike.Connection.Editor.Linux/DevLike.Connection.Editor.Linux.csproj
+                    dotnet publish -r linux-x64 --self-contained -p:PublishSingleFile=true -c Release -o bin/editor/linux-x64 /p:Version=1.0.${{ github.run_number }} src/DevLike.Connection.Editor/DevLike.Connection.Editor.Linux/DevLike.Connection.Editor.Linux.csproj
+                    dotnet publish -r linux-arm64 --self-contained -p:PublishSingleFile=true -c Release -o bin/editor/linux-arm64 -p:Version=1.0.${{ github.run_number }} src/DevLike.Connection.Editor/DevLike.Connection.Editor.Linux/DevLike.Connection.Editor.Linux.csproj
               elif [ "$RUNNER_OS" == "Windows" ]; then
-                    dotnet.exe publish -r win-x64 --self-contained -c Release -o bin/editor/win-x64 -p:Version=1.0.${{ github.run_number }} src/DevLike.Connection.Editor/DevLike.Connection.Editor.Windows/DevLike.Connection.Editor.Windows.csproj
+                    dotnet.exe publish -r win-x64 --self-contained -p:PublishSingleFile=true -c Release -o bin/editor/win-x64 -p:Version=1.0.${{ github.run_number }} src/DevLike.Connection.Editor/DevLike.Connection.Editor.Windows/DevLike.Connection.Editor.Windows.csproj
               else
                     dotnet publish -c Release -o bin/editor -p:Version=1.0.${{ github.run_number }} src/DevLike.Connection.Editor/DevLike.Connection.Editor.MacOS/DevLike.Connection.Editor.MacOS.csproj
               fi
