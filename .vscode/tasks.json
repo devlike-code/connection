@@ -27,6 +27,7 @@
                 "build",
                 "src/DevLike.Connection.Editor/DevLike.Connection.Editor.MacOS/DevLike.Connection.Editor.MacOS.csproj",
                 "/property:GenerateFullPaths=true",
+                "-p:RuntimeIdentifier=osx-arm64",
                 "/consoleloggerparameters:NoSummary"
             ],
             "group": "build",

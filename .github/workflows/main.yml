@@ -7,20 +7,45 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [windows-latest, ubuntu-latest]
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
-      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+      - name: Setup .NET SDK ${{ matrix.dotnet-version }}
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '6.0.x'
+      - name: Setup .NET Workloads
+        run:   |
+              if [ "$RUNNER_OS" == "macOS" ]; then
+                    dotnet workload install macos
+              fi
+        shell: bash
       - name: Build NuGet packages
-        run: dotnet pack DevLike.Connection.sln -o bin/packages -c Release /p:Version=1.0.${{ github.run_number }}
-      - uses: actions/upload-artifact@main
+        run: dotnet pack DevLike.Connection.sln -o bin/packages -c Release -p:Version=1.0.${{ github.run_number }}
+      - name: Build Editor
+        run:   |
+              if [ "$RUNNER_OS" == "Linux" ]; then
+                    dotnet publish -r linux-x64 --self-contained -c Release -o bin/editor/linux-x64 /p:Version=1.0.${{ github.run_number }} src/DevLike.Connection.Editor/DevLike.Connection.Editor.Linux/DevLike.Connection.Editor.Linux.csproj
+                    dotnet publish -r linux-arm64 --self-contained -c Release -o bin/editor/linux-arm64 -p:Version=1.0.${{ github.run_number }} src/DevLike.Connection.Editor/DevLike.Connection.Editor.Linux/DevLike.Connection.Editor.Linux.csproj
+              elif [ "$RUNNER_OS" == "Windows" ]; then
+                    dotnet.exe publish -r win-x64 --self-contained -c Release -o bin/editor/win-x64 -p:Version=1.0.${{ github.run_number }} src/DevLike.Connection.Editor/DevLike.Connection.Editor.Windows/DevLike.Connection.Editor.Windows.csproj
+              else
+                    dotnet publish -c Release -o bin/editor -p:Version=1.0.${{ github.run_number }} src/DevLike.Connection.Editor/DevLike.Connection.Editor.MacOS/DevLike.Connection.Editor.MacOS.csproj
+              fi
+        shell: bash
+      - name: Upload NuGet Packages
+        uses: actions/upload-artifact@main
         with:
-          name: Nuget Packages
+          name: Nuget Packages (${{ matrix.os }})
           path: |
             bin/packages/*.nupkg
+          if-no-files-found: error
+      - name: Upload Editor
+        uses: actions/upload-artifact@main
+        with:
+          name: Editor for ${{ matrix.os }}
+          path: |
+            bin/editor/
           if-no-files-found: error

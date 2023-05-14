@@ -3,7 +3,7 @@
     <TargetFramework>net6.0-macos</TargetFramework>
     <OutputType>Exe</OutputType>
     <SupportedOSPlatformVersion>10.14</SupportedOSPlatformVersion>
-    <RuntimeIdentifier>osx-arm64</RuntimeIdentifier>
+    <RuntimeIdentifiers>osx-arm64;osx-x64</RuntimeIdentifiers>
     <ApplicationId>EtoForms.Test.DevLike</ApplicationId>
   </PropertyGroup>
   
